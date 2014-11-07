@@ -18,6 +18,7 @@ import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.CellRequest;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.*;
+import mondrian.server.Execution;
 import mondrian.server.Locus;
 import mondrian.server.monitor.SqlStatementEvent;
 import mondrian.spi.Dialect;
@@ -926,6 +927,7 @@ RME is this right
         boolean parentChild;
         final RolapLevel parentLevel = parentMember.getLevel();
         RolapLevel childLevel;
+        Execution execution;
         if (parentLevel.isParentChild()) {
             pair = makeChildMemberSqlPC(parentMember);
             parentChild = true;
@@ -946,11 +948,12 @@ RME is this right
         }
         final String sql = pair.left;
         final List<SqlStatement.Type> types = pair.right;
+        execution = Locus.peek().execution;
         SqlStatement stmt =
             RolapUtil.executeQuery(
                 dataSource, sql, types, 0, 0,
                 new SqlStatement.StatementLocus(
-                    Locus.peek().execution,
+                    execution,
                     "SqlMemberSource.getMemberChildren",
                     "while building member cache",
                     SqlStatementEvent.Purpose.TUPLES, 0),
