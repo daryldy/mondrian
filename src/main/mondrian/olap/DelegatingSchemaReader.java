@@ -75,7 +75,11 @@ public abstract class DelegatingSchemaReader implements SchemaReader {
     }
 
     public List<Member> getMemberChildren(Member member) {
-        return schemaReader.getMemberChildren(member);
+        try {
+            return schemaReader.getMemberChildren(member);
+        } catch (java.util.EmptyStackException e) {
+            return schemaReader.withLocus().getMemberChildren(member);
+        }
     }
 
     public List<Member> getMemberChildren(List<Member> members) {
